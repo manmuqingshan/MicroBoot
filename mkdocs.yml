@@ -1,34 +1,10 @@
 # 站点信息
-site_name: MicroBoot  # 文档站点名称
+site_name: MicroKeen  # 文档站点名称
 site_description: A sample documentation site  # 文档站点描述
 site_author: kk  # 文档作者
 
 # 导航栏
 nav:
-  - 简介: index.md
-  - 快速移植:
-      - 基于 CMSIS-PACK 移植 : quick-start/cmsis-pack.md
-      - 基于源码移植: quick-start/quick-start.md
-      - 移植常见问题: quick-start/troubleshooting.md
-      - RT-Thread: quick-start/RT-Thread.md
-  - 使用指南:
-      - 配置: usage-guide/config.md
-  - 必备知识: 
-      - 变参函数和可变参数宏: utilities/ParameterMacro.md
-      - Flash下载算法制作: utilities/FLM.md
-      - 线程安全: utilities/ThreadSafety.md
-  - 组件介绍:
-      - queue:  components/queue/queue.md
-      - 信号槽: components/signals_slots/signals_slots.md
-      - 发布订阅: components/subscribe_publish/subscribe_publish.md
-      - multiple_delay: components/multiple_delay/multiple_delay.md
-      - shell: components/shell/shell.md
-      - ymodem: components/ymodem/ymodem.md
-      - BootLoader: components/bootloader/bootloader.md
-      - Flash Blob: components/flash_blob/flash_blob.md
-      - Message Map: components/msg_map/msg_map.md
-      - Message Map API: components/msgmap/msgmap.md
-      - BootLoader API: bootloader/BootLoader.md
   - 开发神器:
       - MKLink 产品与功能总览: tools/microlink/microlink.md
       - 先楫生态:
@@ -76,6 +52,30 @@ nav:
       - HPM5301：AI 全程调试实录: AI/hpm5301-ai-debug-article.md
       - 安全边界与排障: AI/safety.md
       - 为什么嵌入式 AI 需要硬件闭环: AI/AI_MKLink.md  
+  - MicroBoot: index.md
+  - 快速移植:
+      - 基于 CMSIS-PACK 移植 : quick-start/cmsis-pack.md
+      - 基于源码移植: quick-start/quick-start.md
+      - 移植常见问题: quick-start/troubleshooting.md
+      - RT-Thread: quick-start/RT-Thread.md
+  - 使用指南:
+      - 配置: usage-guide/config.md
+  - 必备知识: 
+      - 变参函数和可变参数宏: utilities/ParameterMacro.md
+      - Flash下载算法制作: utilities/FLM.md
+      - 线程安全: utilities/ThreadSafety.md
+  - 组件介绍:
+      - queue:  components/queue/queue.md
+      - 信号槽: components/signals_slots/signals_slots.md
+      - 发布订阅: components/subscribe_publish/subscribe_publish.md
+      - multiple_delay: components/multiple_delay/multiple_delay.md
+      - shell: components/shell/shell.md
+      - ymodem: components/ymodem/ymodem.md
+      - BootLoader: components/bootloader/bootloader.md
+      - Flash Blob: components/flash_blob/flash_blob.md
+      - Message Map: components/msg_map/msg_map.md
+      - Message Map API: components/msgmap/msgmap.md
+      - BootLoader API: bootloader/BootLoader.md      
   - 第三方库:
       - Arm-2D: 3rd-party/Arm-2D/arm_2d.md
       - PLOOC: 3rd-party/plooc/plooc.md
