@@ -52,7 +52,8 @@ nav:
   - 先楫生态:
       - 先楫生态概览: tools/microlink/先辑使用教程.md
       - HPM5301 + FreeRTOS 全功能实战: tools/microlink/hpm5301-freertos-case.md          
-  - MicroBoot: index.md
+  - MicroBoot:
+      - 简介: index.md
       - 快速移植:
           - 基于 CMSIS-PACK 移植 : quick-start/cmsis-pack.md
           - 基于源码移植: quick-start/quick-start.md
