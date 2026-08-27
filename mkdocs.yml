@@ -50,7 +50,7 @@ nav:
       - 安全边界与排障: AI/safety.md
       - 为什么嵌入式 AI 需要硬件闭环: AI/AI_MKLink.md  
   - 先楫生态:
-      - 先楫生态概览: tools/microlink/先辑使用教程.md
+      - 先楫概览: tools/microlink/HPM.md
       - HPM5301 + FreeRTOS 全功能实战: tools/microlink/hpm5301-freertos-case.md          
   - MicroBoot:
       - 简介: index.md
@@ -70,15 +70,11 @@ nav:
       - ymodem: components/ymodem/ymodem.md
       - BootLoader: components/bootloader/bootloader.md
       - Flash Blob: components/flash_blob/flash_blob.md
-      - Message Map: components/msg_map/msg_map.md
-      - Message Map API: components/msgmap/msgmap.md
-      - BootLoader API: bootloader/BootLoader.md      
+      - Message Map: components/msg_map/msg_map.md    
   - 参与项目:
       - 如何贡献代码: contribute/code.md
       - 如何贡献文档: contribute/document.md
-  - About:
-      - Overview: about/about.md
-      - Team: about/team.md
+  - 淘宝: https://shop330265532.taobao.com/category.htm?spm=pc_detail.30350276.shop_block.dshopinfo.1a0cf2c0rjEbBf
 
 # 主题配置
 theme:
