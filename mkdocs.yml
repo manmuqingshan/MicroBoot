@@ -81,7 +81,6 @@ theme:
   name: material  # 使用 Material 主题
   features:
     - navigation.tabs  # 启用选项卡导航
-    - navigation.indexes  # 启用索引导航
     - navigation.expand  # 默认展开烧录、运行观测、故障定位等二级目录
   palette:
     scheme: default
