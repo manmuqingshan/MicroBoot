@@ -8,6 +8,19 @@ PikaPython 开发文档：https://pikapython.com/doc/#pikapython
 
 普通调试优先使用 Web GUI、MCP 或 CLI；只有编排脱机流程、下载器端 GPIO/蜂鸣器或兼容旧串口工作流时，才直接调用本页接口。写 RAM、擦除或写 Flash 前必须确认地址和影响。
 
+### PC/AI 调用边界
+
+下载器命令口一次只允许一个控制方。同一只下载器不得并行运行 MCP、CLI、Web GUI
+或自定义串口脚本；建立连接后应复用到本次普通命令结束，避免每个变量重新连接。
+AI/MCP 读取多个变量时优先使用 `read_memory_regions`：最多 16 个请求区域、返回总量
+不超过 4096B，连续或重叠地址由上位机合并为一次 `read_ram`。单个 `read_memory` /
+CLI `read-ram` 限制为 4096B；更大只读范围使用有限时长的 `dump-memory` 并保存文件，
+不要把大段 hexdump 直接送入模型上下文。
+
+MCP 单次 RTT/SystemView/串口采集最长 30 秒。工具超时后只检查一次连接状态，不得
+并行或原样循环重试；先断开，REPL 仍响应时可发送一次 `reboot()`，否则停止自动操作
+并重新插拔 USB。流式功能结束后释放当前连接，普通命令重新连接后再执行。
+
 ---
 
 ![](../../images/microlink/API.png)
@@ -33,6 +46,10 @@ PikaPython 开发文档：https://pikapython.com/doc/#pikapython
 
 **注意：数据保存到文件后，需要重启下载器，U盘中才能刷新出新文件**
 
+通过命令口直接返回文本 hexdump 时，单次建议且上位机默认限制为 `1..4096B`。
+更大范围改用 `cmd.dump_memory` 的二进制分块协议或保存到文件，避免 USB 文本输出和
+上位机/AI 上下文被大量十六进制文本占满。
+
 ```c++
 cmd.read_ram(0x20000000,128)
          00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F
@@ -54,6 +71,11 @@ cmd.read_ram(0x20000000,128)
 
 - `addr`：写入地址
 - `byte`：N 个待写入的字节数据
+
+V4.3.8 在 STM32H743 上复测 `cmd.write_ram`、`flush_memory` bytes 字面量及重复字节
+折叠表达式，均能把非零哨兵正确清为全零。PC 端仍应在写后回读比对；MKLink CLI
+`write-ram` 已统一走 `Device.write_memory` 并强制回读验证，避免旧固件的静默失败被
+命令回显掩盖。
 
 **示例**:
 
@@ -186,7 +208,7 @@ cmd.read_cpu_reg(0,16)
 
 - `addr`：读取地址，字节地址，按 `(addr, size)` 成对传入，可一次读取多个区域
 - `size`：读取的字节数
-- `period`：采样周期，单位秒，`>0` 表示持续采样，`0` 表示单次输出
+- `period`：采样周期，单位秒；`>0` 持续采样，`0` 单次输出后回到 idle，`-1` 显式停止
 
 **数据协议**:
 
@@ -196,10 +218,18 @@ cmd.read_cpu_reg(0,16)
 
 | 项目 | 边界 | 说明 |
 |---|---:|---|
-| 单次 `addr/size` 参数总数 | `<= 32` | `addr` 和 `size` 必须成对传入，即最多 16 组 `(addr, size)` / 16 个 region；最后的 `period` 为采样周期参数，不计入这 32 个 `addr/size` 数据参数 |
-| 单次地址/region 数量 | `<= 16` | 每个 region 对应一组 `(addr, size)`； |
+| 固件内部 region 容量 | `16` | 数据结构和帧协议可表示 16 个 region，不等于 Pika 文本入口可安全传 16 组参数 |
+| Pika/CLI 安全 region 数量 | `<= 15` | 15 组含 30 个地址/长度参数，加 period 共 31 个；16 组加 period 共 33 个参数，正好触及当前 `PIKA_ARG_NUM_MAX=33`，V4.3.8 实测可能使 REPL 失去响应；此边界与剩余堆大小无关 |
 | 普通帧 | `total_size <= 2048 bytes` | 单帧返回 |
 | 大数据分块帧 | `total_size > 2048 bytes` | B1 分块返回，每个 block 负载最大 2048 bytes |
+
+连续的 16 个变量应合并为一个连续 region；上位机 `read_memory_regions` 会自动完成
+这种合并。16 个完全离散地址的一次性快照可由上位机拆分读取，但当前 Pika 文本 API
+不得用一条 `cmd.dump_memory` 命令提交 16 个离散 region。不得从串口脚本绕过限制。
+
+持续流停止后至少等待 50ms 排空已排队的二进制帧并关闭连接。V4.3.8 实测将停止
+等待压到 10ms 会让残留帧污染后续普通命令；默认 50ms、每轮释放连接连续 20 次通过，
+CRC/flags 均为 0。不要快速反复 start/stop；下一条普通 `read_ram` 应重新连接后执行。
 
 **普通帧格式**:
 
